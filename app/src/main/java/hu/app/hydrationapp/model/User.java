@@ -7,14 +7,16 @@ public class User {
     public int age;
     public String gender;
     public String activityLevel;
-    public double totalWaterIntake; // Az új adattag a teljes vízmennyiségnek
+    public double totalWaterIntake;// teljes vízmennyiség
 
-    // Üres konstruktor szükséges a Firebase számára
+    public float currentWaterIntake;
+
+    // üres konstruktor szükséges a Firebase számára
     public User() {
     }
 
-    // Konstruktor az objektum létrehozásához az adatokkal
-    public User(String name, int height, int weight, int age, String gender, String activityLevel, double totalWaterIntake) {
+    // konstruktor az objektum létrehozásához az adatokkal
+    public User(String name, int height, int weight, int age, String gender, String activityLevel, double totalWaterIntake, float currentWaterIntake) {
         this.name = name;
         this.height = height;
         this.weight = weight;
@@ -22,9 +24,10 @@ public class User {
         this.gender = gender;
         this.activityLevel = activityLevel;
         this.totalWaterIntake = totalWaterIntake;
+        this.currentWaterIntake = currentWaterIntake;
     }
 
-    // Getterek és setterek (opcionális, de javasolt)
+    // Getterek és setterek
     public String getName() {
         return name;
     }
@@ -80,4 +83,13 @@ public class User {
     public void setTotalWaterIntake(double totalWaterIntake) {
         this.totalWaterIntake = totalWaterIntake;
     }
+
+     public float getCurrentWaterIntake() {
+        return currentWaterIntake;
+    }
+
+   public void setCurrentWaterIntake(float currentWaterIntake) {
+        this.currentWaterIntake = currentWaterIntake;
+    }
+
 }

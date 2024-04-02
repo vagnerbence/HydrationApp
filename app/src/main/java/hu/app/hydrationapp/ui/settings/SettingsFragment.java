@@ -112,6 +112,8 @@ public class SettingsFragment extends Fragment {
         String gender = binding.genderRadioGroup.getCheckedRadioButtonId() == R.id.maleRadioButton ? "Male" : "Female";
         String activityLevel = binding.activityLevelSpinner.getSelectedItem().toString();
 
+        float currentWaterIntake = 0.0f; //beállítjuk 0-ra
+
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             double activityWater = HydrationCalculator.calculateActivityWater(activityLevel);
@@ -119,7 +121,7 @@ public class SettingsFragment extends Fragment {
             double totalWaterIntake = activityWater + baseWater;
 
             // Az új adatok frissítése a User objektumban
-            User userData = new User(name, height, weight, age, gender, activityLevel, totalWaterIntake);
+            User userData = new User(name, height, weight, age, gender, activityLevel, totalWaterIntake, currentWaterIntake);
 
             // A frissített adatok mentése az adatbázisba
             mDatabase.child("users").child(user.getUid()).setValue(userData)
