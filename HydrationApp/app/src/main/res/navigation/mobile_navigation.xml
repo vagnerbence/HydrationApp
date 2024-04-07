@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/login_home">
+
+    <fragment
+        android:id="@+id/login_home"
+        android:name="hu.app.hydrationapp.ui.login.LoginFragment"
+        android:label="@string/title_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login_home_to_navigation_home"
+            app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_login_home_to_navigation_registration"
+            app:destination="@id/navigation_registration" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_registration"
+        android:name="hu.app.hydrationapp.ui.registration.RegistrationFragment"
+        android:label="@string/title_registration"
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/action_navigation_registration_to_navigation_home"
+            app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_registration_to_login_home"
+            app:destination="@id/login_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="hu.app.hydrationapp.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="hu.app.hydrationapp.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="hu.app.hydrationapp.ui.notifications.NotificationsFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_logout"
+        android:name="hu.app.hydrationapp.ui.logout.LogoutFragment"
+        android:label="@string/title_logout"
+        tools:layout="@layout/fragment_logout" >
+        <action
+            android:id="@+id/action_navigation_logout_to_navigation_home"
+            app:destination="@id/login_home" />
+    </fragment>
+</navigation>

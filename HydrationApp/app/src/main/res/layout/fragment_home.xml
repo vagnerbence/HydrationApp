@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/targetQuantityInputLayout"
+        android:layout_width="160dp"
+        android:layout_height="57dp"
+        android:hint="Target Quantity (l)"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusBottomEnd="32dp"
+        app:boxCornerRadiusBottomStart="32dp"
+        app:boxCornerRadiusTopEnd="32dp"
+        app:boxCornerRadiusTopStart="32dp"
+        app:boxStrokeColor="#3F51B5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/quantityEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/currentQuantityInputLayout"
+        android:layout_width="160dp"
+        android:layout_height="57dp"
+        android:hint="Current Quantity (l)"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusBottomEnd="32dp"
+        app:boxCornerRadiusBottomStart="32dp"
+        app:boxCornerRadiusTopEnd="32dp"
+        app:boxCornerRadiusTopStart="32dp"
+        app:boxStrokeColor="#3F51B5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/targetQuantityInputLayout"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/currentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="false"
+        app:lottie_fileName="fillingWater4.json"
+        app:lottie_loop="false" />
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/successAnimation"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="false"
+        app:lottie_fileName="success2.json"
+        app:lottie_loop="false" />
+
+
+
+    <ImageButton
+        android:id="@+id/btnFivePercent"
+        android:layout_width="60dp"
+        android:layout_height="78dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/pixabay_drop2"
+        android:text="5%"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnTenPercent"
+        android:layout_width="90dp"
+        android:layout_height="110dp"
+        android:background="@drawable/pixabay_drop2"
+        android:text="10%"
+        app:layout_constraintBottom_toBottomOf="@+id/btnFivePercent"
+        app:layout_constraintEnd_toStartOf="@+id/btnTwentyFivePercent"
+        app:layout_constraintStart_toEndOf="@+id/btnFivePercent"
+        app:layout_constraintTop_toTopOf="@+id/btnFivePercent"
+        app:layout_constraintVertical_bias="0.45" />
+
+    <ImageButton
+        android:id="@+id/btnTwentyFivePercent"
+        android:layout_width="110dp"
+        android:layout_height="130dp"
+        android:layout_marginEnd="132dp"
+        android:background="@drawable/pixabay_drop2"
+        android:text="25%"
+        app:layout_constraintBottom_toBottomOf="@+id/btnTenPercent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnTenPercent" />
+
+    <ImageButton
+        android:id="@+id/btnFiftyPercent"
+        android:layout_width="130dp"
+        android:layout_height="150dp"
+        android:background="@drawable/pixabay_drop2"
+        android:text="50%"
+        app:layout_constraintBottom_toBottomOf="@+id/btnTwentyFivePercent"
+        app:layout_constraintStart_toEndOf="@+id/btnTwentyFivePercent"
+        app:layout_constraintTop_toTopOf="@+id/btnTwentyFivePercent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
