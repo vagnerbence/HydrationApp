@@ -1,5 +1,12 @@
 package hu.app.hydrationapp.ui.home;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +23,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 import hu.app.hydrationapp.databinding.FragmentHomeBinding;
+import hu.app.hydrationapp.model.DailyWaterIntake;
+import hu.app.hydrationapp.model.ReminderBroadcastReceiver;
 import hu.app.hydrationapp.model.User;
 
 public class HomeFragment extends Fragment {
@@ -48,27 +62,59 @@ public class HomeFragment extends Fragment {
                 if (task.isSuccessful()) {
                     User user = task.getResult().getValue(User.class);
                     if (user != null) {
-                        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-                        String formattedTotalValue = decimalFormat.format(user.getTotalWaterIntake());
-                        String formattedCurrentValue = decimalFormat.format(user.getCurrentWaterIntake());
-                        binding.quantityEditText.setText(formattedTotalValue);
-                        binding.currentEditText.setText(formattedCurrentValue);
+
+                        updateUIBasedOnUser(user);
+                        resetCurrentWaterIntakeIfNeeded(user);
+
 
                         // Kezdő animáció állapot és sikeres animáció elrejtése új felhasználók esetén
                         float initialProgress = user.getCurrentWaterIntake() / (float) user.getTotalWaterIntake();
                         binding.animationView.setProgress(initialProgress);
                         binding.successAnimation.setVisibility(View.GONE);
                     } else {
-                        // Kezelje az esetet, ha az adatok nem érhetők el (pl. új felhasználó)
-                        binding.quantityEditText.setText("0");
-                        binding.currentEditText.setText("0");
-                        binding.animationView.setProgress(0f);
-                        binding.successAnimation.setVisibility(View.GONE);
+
+                        // Kezeljük az esetet, ha nincsenek felhasználói adatok
+                        handleNoUserData();
+
+
+
                     }
                 }
             });
         }
     }
+
+    private void updateUIBasedOnUser(User user) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        String formattedTotalValue = decimalFormat.format(user.getTotalWaterIntake());
+        String formattedCurrentValue = decimalFormat.format(user.getCurrentWaterIntake());
+        binding.quantityEditText.setText(formattedTotalValue);
+        binding.currentEditText.setText(formattedCurrentValue);
+    }
+
+    private void resetCurrentWaterIntakeIfNeeded(User user) {
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        if (!today.equals(user.getLastUpdateDate())) {
+            user.setCurrentWaterIntake(0);
+            user.setLastUpdateDate(today);
+
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                String uid = currentUser.getUid();
+                mDatabase.child("users").child(uid).setValue(user);
+            }
+        }
+    }
+
+
+    private void handleNoUserData(){
+        // Kezelje az esetet, ha az adatok nem érhetők el (pl. új felhasználó)
+        binding.quantityEditText.setText("0");
+        binding.currentEditText.setText("0");
+        binding.animationView.setProgress(0f);
+        binding.successAnimation.setVisibility(View.GONE);
+    }
+
 
     private void setupButtons() {
 
@@ -86,34 +132,56 @@ public class HomeFragment extends Fragment {
     }
 
     private void addWater(float amount) {
+        //felhasználó lekérdezése
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        //van-e bejelentkezett felhasználó
         if (currentUser != null) {
-            mDatabase.child("users").child(currentUser.getUid()).get().addOnCompleteListener(task -> {
+            //egyedi azonosítójának lekérdezése
+            String uid = currentUser.getUid();
+            // Adatbázisból a felhasználó adatainak lekérdezése
+            mDatabase.child("users").child(uid).get().addOnCompleteListener(task -> {
+                // lekérdezés sikeres volt-e és van-e adat
                 if (task.isSuccessful() && task.getResult().getValue(User.class) != null) {
+                    //adatok konvertálása User objektummá
                     User user = task.getResult().getValue(User.class);
-                    // Ha a felhasználó új, és a currentWaterIntake 0, beállítjuk a kezdő progresszt
-                    float startingProgress = user.getCurrentWaterIntake() == 0 ? 0f : binding.animationView.getProgress();
-
+                    //vízfogyasztás kiszámítása, de nem haladhatja meg a teljes napi bevitelt
                     float newCurrentWaterIntake = Math.min(user.getCurrentWaterIntake() + amount, (float) user.getTotalWaterIntake());
+                    //frissítjük a felhasználó jelenlegi vízfogyasztását az új értékkel
                     user.setCurrentWaterIntake(newCurrentWaterIntake);
 
-                    mDatabase.child("users").child(currentUser.getUid()).setValue(user).addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
+
+
+                    //adott napra vonatkozó vízfogyasztási adatok frissítése vagy létrehozása a DailyWaterIntake objektummal
+                    String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                    boolean goalAchieved = newCurrentWaterIntake >= user.getTotalWaterIntake();
+                    DailyWaterIntake dailyIntake = new DailyWaterIntake(today, goalAchieved);
+                    if (user.getDailyWaterIntakes() == null) {
+                        user.setDailyWaterIntakes(new HashMap<>());
+                    }
+                    user.getDailyWaterIntakes().put(today, dailyIntake);
+                    scheduleReminderIfGoalNotAchieved(user, goalAchieved);
+
+
+
+                    //felhasználó adatbázisban történő frissítése az új adatokkal
+                    mDatabase.child("users").child(uid).setValue(user).addOnCompleteListener(updateTask -> {
+                        //ellenőrizzük, hogy a frissítés sikeres volt-e
+                        if (updateTask.isSuccessful()) {
+                            //frissítjük a UI-t az új vízfogyasztási adatokkal
                             DecimalFormat decimalFormat = new DecimalFormat("#.##");
                             String formattedValue = decimalFormat.format(newCurrentWaterIntake);
                             binding.currentEditText.setText(formattedValue);
 
+                            //animáció frissítése az új vízfogyasztási adatok alapján
                             float progress = newCurrentWaterIntake / (float) user.getTotalWaterIntake();
-
-                            // Ellenőrizzük, hogy az animáció ne kezdődjön nagyobb progressznél
-                            if (startingProgress < progress) {
-                                binding.animationView.setMinAndMaxProgress(startingProgress, progress);
-                            } else {
-                                binding.animationView.setMinAndMaxProgress(0f, progress);
+                            if (binding.animationView.getProgress() < progress) {
+                                // Csak akkor játsszuk le az animációt, ha a progress növekedett
+                                binding.animationView.setMinAndMaxProgress(binding.animationView.getProgress(), progress);
+                                binding.animationView.playAnimation();
                             }
-                            binding.animationView.playAnimation();
 
-                            if (newCurrentWaterIntake >= user.getTotalWaterIntake()) {
+                            //felhasználó elérte a napi vízfogyasztási célját, lejátszuk a siker animációt
+                            if (goalAchieved) {
                                 playSuccessAnimation();
                             }
                         }
@@ -124,13 +192,48 @@ public class HomeFragment extends Fragment {
     }
 
 
-
     private void playSuccessAnimation() {
         LottieAnimationView successAnimation = binding.successAnimation;
-        successAnimation.setVisibility(View.VISIBLE); // Ha el volt rejtve, tedd láthatóvá
-        successAnimation.setAnimation("success2.json"); // Ellenőrizd, hogy ez megfelel-e az animációd fájlnevénk
-        successAnimation.playAnimation(); // Lejátszás indítása
+        successAnimation.setVisibility(View.VISIBLE); // láthatóvá tétel
+        successAnimation.setAnimation("success2.json");
+        successAnimation.playAnimation();
     }
+
+    private void scheduleReminderIfGoalNotAchieved(User user, boolean goalAchieved) {
+        if (!goalAchieved) {
+            //értesítési csatorna létrehozása, ha még nem létezik
+            NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager.getNotificationChannel("hydrateReminder") == null) {
+                NotificationChannel channel = new NotificationChannel("hydrateReminder", "Hydration Reminder", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            //alarmManager használata az értesítés beállításához
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(getContext(), ReminderBroadcastReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+            //időzítést itt, például minden két órában, csak a napi aktív időszakban
+            Calendar startTime = Calendar.getInstance();
+            startTime.set(Calendar.HOUR_OF_DAY, 8);
+            startTime.set(Calendar.MINUTE, 0);
+            long intervalTime = 1000 * 60* 60* 2; // 2 óránként
+
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Calendar.HOUR_OF_DAY, 18);
+            endTime.set(Calendar.MINUTE, 0);
+            endTime.set(Calendar.SECOND, 0);
+
+
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime.getTimeInMillis(), intervalTime, pendingIntent);
+        }
+    }
+
+    // Ezt a metódust hívd meg az addWater függvényben, miután frissítetted a user objektumot
+
+
+
 
 
     @Override

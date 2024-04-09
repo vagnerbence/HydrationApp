@@ -38,6 +38,7 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.applandeo:material-calendar-view:1.9.2")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

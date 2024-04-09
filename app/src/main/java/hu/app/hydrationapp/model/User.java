@@ -1,5 +1,8 @@
 package hu.app.hydrationapp.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class User {
     public String name;
     public int height;
@@ -7,15 +10,19 @@ public class User {
     public int age;
     public String gender;
     public String activityLevel;
-    public double totalWaterIntake;// teljes vízmennyiség
+    public double totalWaterIntake; // teljes vízmennyiség
+    public float currentWaterIntake; // jelenlegi vízfogyasztás
+    private Map<String, DailyWaterIntake> dailyWaterIntakes; // napi vízfogyasztási adatok
 
-    public float currentWaterIntake;
+    private String lastUpdateDate;
+
 
     // üres konstruktor szükséges a Firebase számára
     public User() {
+        dailyWaterIntakes = new HashMap<>();
     }
 
-    // konstruktor az objektum létrehozásához az adatokkal
+    //konstruktor az objektum létrehozásához az adatokkal
     public User(String name, int height, int weight, int age, String gender, String activityLevel, double totalWaterIntake, float currentWaterIntake) {
         this.name = name;
         this.height = height;
@@ -25,6 +32,8 @@ public class User {
         this.activityLevel = activityLevel;
         this.totalWaterIntake = totalWaterIntake;
         this.currentWaterIntake = currentWaterIntake;
+        this.dailyWaterIntakes = new HashMap<>();
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     // Getterek és setterek
@@ -84,12 +93,26 @@ public class User {
         this.totalWaterIntake = totalWaterIntake;
     }
 
-     public float getCurrentWaterIntake() {
+    public float getCurrentWaterIntake() {
         return currentWaterIntake;
     }
 
-   public void setCurrentWaterIntake(float currentWaterIntake) {
+    public void setCurrentWaterIntake(float currentWaterIntake) {
         this.currentWaterIntake = currentWaterIntake;
     }
 
+    public Map<String, DailyWaterIntake> getDailyWaterIntakes() {
+        return dailyWaterIntakes;
+    }
+    public void setDailyWaterIntakes(Map<String, DailyWaterIntake> dailyWaterIntakes) {
+        this.dailyWaterIntakes = dailyWaterIntakes;
+    }
+
+    public String getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(String lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 }

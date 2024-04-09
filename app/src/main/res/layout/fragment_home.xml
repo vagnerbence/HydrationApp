@@ -117,4 +117,43 @@
         app:layout_constraintBottom_toBottomOf="@+id/btnTwentyFivePercent"
         app:layout_constraintStart_toEndOf="@+id/btnTwentyFivePercent"
         app:layout_constraintTop_toTopOf="@+id/btnTwentyFivePercent" />
+
+    <TextView
+        android:id="@+id/textView1dl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 dl"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5dl"
+        app:layout_constraintEnd_toEndOf="@+id/btnFivePercent"
+        app:layout_constraintStart_toStartOf="@+id/btnFivePercent" />
+
+    <TextView
+        android:id="@+id/textView2dl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2 dl"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5dl"
+        app:layout_constraintEnd_toEndOf="@+id/btnTenPercent"
+        app:layout_constraintStart_toStartOf="@+id/btnTenPercent" />
+
+    <TextView
+        android:id="@+id/textView5dl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="5 dl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnTwentyFivePercent"
+        app:layout_constraintStart_toStartOf="@+id/btnTwentyFivePercent" />
+
+    <TextView
+        android:id="@+id/textView10dl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 l"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5dl"
+        app:layout_constraintEnd_toEndOf="@+id/btnFiftyPercent"
+        app:layout_constraintStart_toStartOf="@+id/btnFiftyPercent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

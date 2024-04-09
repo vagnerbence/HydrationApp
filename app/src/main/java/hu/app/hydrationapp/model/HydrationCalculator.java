@@ -13,18 +13,18 @@ public class HydrationCalculator {
             case "High":
                 return 1.74;
             default:
-                return 0.0; // Ha az aktivitási szint nem ismert
+                return 0.0;
         }
     }
 
-    // Hozzáadtuk a 'gender' paramétert a metódus szignatúrájához
-    public static double calculateBaseWater(double weight, int age, String gender) {
-        double ageFactor = age < 30 ? 40 : age < 55 ? 35 : 30;
-        double weightInPounds = weight / 0.45359237; // A súly átváltása fontba
-        double baseWaterOunces = ((weightInPounds / 2) * ageFactor) / 28.3;
-        double baseWaterLiters = baseWaterOunces / 33.814; // Az eredmény átváltása literbe
 
-        // Ellenőrizzük a nem-specifikus minimális vízbevitelt és szükség esetén állítsuk be
+    public static double calculateBaseWater(double weight, int age, String gender) {
+        double ageFactor = age < 30 ? 40 : age < 55 ? 53: 30;
+        double weightInPounds = weight / 0.45359237; //súly átváltása fontba
+        double baseWaterOunces = ((weightInPounds / 2) * ageFactor) / 28.3;
+        double baseWaterLiters = baseWaterOunces / 33.814; //eredmény átváltása literbe
+
+        //ellenőrizzük a nem-specifikus minimális vízbevitelt és szükség esetén állítsuk be
         if ("Male".equals(gender) && baseWaterLiters < 2.25) {
             return 2.25;
         } else if ("Female".equals(gender) && baseWaterLiters < 2.0) {

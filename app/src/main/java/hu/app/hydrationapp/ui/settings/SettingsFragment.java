@@ -42,7 +42,7 @@ public class SettingsFragment extends Fragment {
 
         binding.buttonSave.setOnClickListener(view -> saveUserSettings());
 
-        loadUserSettings(); // Betöltjük a felhasználó beállításait az adatbázisból
+        loadUserSettings(); //felhasználó beállításai az adatbázisból
 
         return root;
     }
@@ -60,36 +60,35 @@ public class SettingsFragment extends Fragment {
             mDatabase.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    // Ellenőrizzük, hogy léteznek-e mentett beállítások a jelenlegi felhasználóhoz
+                    //léteznek-e mentett beállítások a jelenlegi felhasználóhoz
                     if (!dataSnapshot.exists()) {
-                        // Ha nem léteznek adatok, akkor tisztítjuk a UI mezőket
+                        //ha nem léteznek adatok, akkor tisztítjuk a UI mezőket
                         clearUserDataInView();
-                        return; // Ezzel befejezzük a metódus futtatását
+                        return; //ezzel befejezzük a metódus futtatását
                     }
 
-                    // Ha vannak mentett adatok, betöltjük őket
+                    //ha vannak mentett adatok
                     User userSettings = dataSnapshot.getValue(User.class);
                     if (userSettings != null) {
-                        // Itt töltsd be a felhasználó adatait a UI elemekbe
                         binding.nameEditText.setText(userSettings.getName());
                         binding.heightEditText.setText(String.valueOf(userSettings.getHeight()));
                         binding.weightEditText.setText(String.valueOf(userSettings.getWeight()));
                         binding.ageEditText.setText(String.valueOf(userSettings.getAge()));
 
-                        // A nem kiválasztása a RadioButton alapján
+                        //nem kiválasztása a RadioButton alapján
                         if ("Male".equals(userSettings.getGender())) {
                             binding.genderRadioGroup.check(R.id.maleRadioButton);
                         } else if ("Female".equals(userSettings.getGender())) {
                             binding.genderRadioGroup.check(R.id.femaleRadioButton);
                         }
 
-                        // Az aktivitási szint kiválasztása a Spinner-ben
+                        //aktivitási szint kiválasztása a Spinner-ben
                         String activityLevel = userSettings.getActivityLevel();
                         ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) binding.activityLevelSpinner.getAdapter();
                         int position = adapter.getPosition(activityLevel);
                         binding.activityLevelSpinner.setSelection(position);
 
-                        // Az összesített napi vízbevitel megjelenítése
+                        //összesített napi vízbevitel megjelenítése
                         DecimalFormat df = new DecimalFormat("#.##");
                         String formattedTotalWaterIntake = df.format(userSettings.getTotalWaterIntake());
                         binding.quantityEditText.setText(formattedTotalWaterIntake);
@@ -120,16 +119,16 @@ public class SettingsFragment extends Fragment {
             double baseWater = HydrationCalculator.calculateBaseWater(weight, age,gender);
             double totalWaterIntake = activityWater + baseWater;
 
-            // Az új adatok frissítése a User objektumban
+            //új adatok frissítése a User objektumban
             User userData = new User(name, height, weight, age, gender, activityLevel, totalWaterIntake, currentWaterIntake);
 
-            // A frissített adatok mentése az adatbázisba
+            //frissített adatok mentése az adatbázisba
             mDatabase.child("users").child(user.getUid()).setValue(userData)
                     .addOnSuccessListener(aVoid -> {
-                        // Sikeres mentés esetén frissítjük a felhasználó felületét is
+                        //mentés esetén frissítjük a felhasználó felületét is
                         Toast.makeText(getContext(), "Settings saved successfully.", Toast.LENGTH_SHORT).show();
 
-                        // Betöltjük a frissített adatokat újra azonnal, hogy megjelenjenek a felületen
+                        //betöltjük a frissített adatokat újra azonnal, hogy megjelenjenek a felületen
                         loadUserSettings();
                     })
                     .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to save settings.", Toast.LENGTH_SHORT).show());
