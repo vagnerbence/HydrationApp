@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "HydrationApp"
 include(":app")
+include(":wearablehydration")

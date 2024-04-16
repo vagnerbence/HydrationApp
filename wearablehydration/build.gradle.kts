@@ -1,21 +1,23 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
 
-    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "hu.app.hydrationapp"
+    namespace = "hu.app.wearablehydration"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "hu.app.hydrationapp"
-        minSdk = 28
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -28,18 +30,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     buildFeatures {
-        viewBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
-    implementation("com.airbnb.android:lottie:3.4.0")
-    implementation("com.google.android.material:material:1.4.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.applandeo:material-calendar-view:1.9.2")
+    implementation ("androidx.localbroadcastmanager:localbroadcastmanager:1.0.0")
     implementation("androidx.wear:wear:1.3.0")
     implementation("com.google.android.gms:play-services-wearable:17.0.0")
     // Add support for wearable specific inputs
@@ -53,16 +62,21 @@ dependencies {
     implementation("androidx.wear:wear-phone-interactions:1.0.1")
     // Use to implement support for interactions between the Wearables and Phones
     implementation("androidx.wear:wear-remote-interactions:1.0.0")
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.constraintlayout)
-    implementation(libs.lifecycle.livedata.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.navigation.fragment)
-    implementation(libs.navigation.ui)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    implementation(libs.play.services.wearable)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.ui)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.compose.material)
+    implementation(libs.compose.foundation)
+    implementation(libs.activity.compose)
+    implementation(libs.core.splashscreen)
+    implementation(libs.tiles)
+    implementation(libs.tiles.material)
+    implementation(libs.horologist.compose.tools)
+    implementation(libs.horologist.tiles)
+    implementation(libs.watchface.complications.data.source.ktx)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.ui.test.junit4)
+    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.ui.test.manifest)
 }
