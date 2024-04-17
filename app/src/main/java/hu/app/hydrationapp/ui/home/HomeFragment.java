@@ -229,7 +229,7 @@ public class HomeFragment extends Fragment {
                             binding.currentEditText.setText(formattedValue);
 
                             sendWaterIntakeUpdateToWearable(user.getCurrentWaterIntake());
-
+                            sendUserDataToWearable(user);
 
                             //animáció frissítése az új vízfogyasztási adatok alapján
                             float progress = newCurrentWaterIntake / (float) user.getTotalWaterIntake();
@@ -334,7 +334,7 @@ public class HomeFragment extends Fragment {
         dataMap.getDataMap().putString("username", user.getName());
         dataMap.getDataMap().putFloat("currentWaterIntake", user.getCurrentWaterIntake());
         dataMap.getDataMap().putDouble("totalWaterIntake", user.getTotalWaterIntake());
-        dataMap.getDataMap().putLong("timestamp", new Date().getTime());
+        dataMap.getDataMap().putLong("timestamp", new Date().getTime()); // Az időbélyeg biztosítja, hogy az adatfrissítés észlelhető legyen.
         PutDataRequest request = dataMap.asPutDataRequest();
         request.setUrgent();
         Wearable.getDataClient(getActivity()).putDataItem(request)

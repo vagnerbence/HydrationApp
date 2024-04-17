@@ -54,10 +54,9 @@ dependencies {
     // Add support for wearable specific inputs
     implementation("androidx.wear:wear-input:1.1.0")
     implementation("androidx.wear:wear-input-testing:1.1.0")
-
+    //implementation("androidx.compose.material3:material3:1.0.0-alpha01")
     // Use to implement wear ongoing activities
     implementation("androidx.wear:wear-ongoing:1.0.0")
-
     // Use to implement support for interactions from the Wearables to Phones
     implementation("androidx.wear:wear-phone-interactions:1.0.1")
     // Use to implement support for interactions between the Wearables and Phones
@@ -75,6 +74,7 @@ dependencies {
     implementation(libs.horologist.compose.tools)
     implementation(libs.horologist.tiles)
     implementation(libs.watchface.complications.data.source.ktx)
+    implementation(libs.material3.android)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
