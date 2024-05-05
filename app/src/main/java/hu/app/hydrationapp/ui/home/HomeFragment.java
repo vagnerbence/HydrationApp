@@ -188,7 +188,7 @@ public class HomeFragment extends Fragment {
 
                     //adott napra vonatkozó vízfogyasztási adatok frissítése vagy létrehozása a DailyWaterIntake objektummal
                     String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-                    boolean goalAchieved = newCurrentWaterIntake >= user.getTotalWaterIntake();
+                    boolean goalAchieved = (newCurrentWaterIntake + 0.01f) >= user.getTotalWaterIntake();
                     DailyWaterIntake dailyIntake = new DailyWaterIntake(today, goalAchieved);
                     if (user.getDailyWaterIntakes() == null) {
                         user.setDailyWaterIntakes(new HashMap<>());

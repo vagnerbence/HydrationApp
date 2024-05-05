@@ -41,13 +41,9 @@ public class NotificationsFragment extends Fragment {
                     User user = task.getResult().getValue(User.class);
                     if (user != null && user.getDailyWaterIntakes() != null) {
 
-                        // Itt frissítjük a naptárt a megfelelő adatokkal
                         List<CalendarDay> calendarDays = generateCalendarDays(user.getDailyWaterIntakes());
                         binding.calendarView.setCalendarDays(calendarDays);
 
-                    } else {
-                        // Kezeljük az esetet, ha nincsenek felhasználói adatok
-                        // Például megjeleníthetünk egy üzenetet, vagy navigálhatunk egy másik képernyőre
                     }
                 }
             });
@@ -59,7 +55,6 @@ public class NotificationsFragment extends Fragment {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Itt hívjuk meg az adatok betöltésére szolgáló függvényt
         loadUserAndDailyIntakes();
 
         return root;
@@ -78,11 +73,9 @@ public class NotificationsFragment extends Fragment {
 
             CalendarDay calendarDay = new CalendarDay(calendar);
             if (goalAchieved) {
-                // A cél elérése esetén zöld pipa vagy más jelzés beállítása
                 calendarDay.setImageDrawable(getResources().getDrawable(R.drawable.baseline_check_24));
 
             } else {
-                // Ha a cél nem lett elérve, piros X vagy más jelzés
                 calendarDay.setImageDrawable(getResources().getDrawable(R.drawable.baseline_clear_24));
 
             }
