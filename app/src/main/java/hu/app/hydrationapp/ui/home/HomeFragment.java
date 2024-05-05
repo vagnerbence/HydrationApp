@@ -69,7 +69,6 @@ public class HomeFragment extends Fragment {
 
         setupButtons();
 
-        sendUserData();
 
         Wearable.getMessageClient(getContext()).addListener(messageReceivedListener);
 
@@ -77,22 +76,6 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-  /*  private final MessageClient.OnMessageReceivedListener messageReceivedListener = new MessageClient.OnMessageReceivedListener() {
-        @Override
-        public void onMessageReceived(@NonNull MessageEvent messageEvent) {
-            if ("/update_water_intake".equals(messageEvent.getPath())) {
-                final String amountString = new String(messageEvent.getData(), StandardCharsets.UTF_8);
-                final float amount = Float.parseFloat(amountString);
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        addWater(amount);
-                    }
-                });
-            }
-        }
-    };*/
 
     private final MessageClient.OnMessageReceivedListener messageReceivedListener = new MessageClient.OnMessageReceivedListener() {
         @Override
@@ -115,20 +98,19 @@ public class HomeFragment extends Fragment {
                     if (user != null) {
 
                         updateUIBasedOnUser(user);
+
                         resetCurrentWaterIntakeIfNeeded(user);
 
                         sendUserDataToWearable(user); // Adatok elküldése a viselhető eszközre
 
-                        // Kezdő animáció állapot és sikeres animáció elrejtése új felhasználók esetén
+                        // kezdő animáció állapot és sikeres animáció elrejtése új felhasználók esetén
                         float initialProgress = user.getCurrentWaterIntake() / (float) user.getTotalWaterIntake();
                         binding.animationView.setProgress(initialProgress);
                         binding.successAnimation.setVisibility(View.GONE);
                     } else {
 
-                        // Kezeljük az esetet, ha nincsenek felhasználói adatok
+                        // kezeljük az esetet, ha nincsenek felhasználói adatok
                         handleNoUserData();
-
-
 
                     }
                 }
@@ -191,7 +173,7 @@ public class HomeFragment extends Fragment {
             //egyedi azonosítójának lekérdezése
             sendSimpleMessageToWear();
             String uid = currentUser.getUid();
-            // Adatbázisból a felhasználó adatainak lekérdezése
+            // Firebase-ből a felhasználó adatainak lekérdezése
             mDatabase.child("users").child(uid).get().addOnCompleteListener(task -> {
                 // lekérdezés sikeres volt-e és van-e adat
                 if (task.isSuccessful() && task.getResult().getValue(User.class) != null) {
@@ -215,9 +197,7 @@ public class HomeFragment extends Fragment {
                     scheduleReminderIfGoalNotAchieved(user, goalAchieved);
 
                     sendUserDataToWearable(user);
-                    sendMessageToWear(user);
-                    sendUsernameToWearable(user.getName());
-                    sendWaterIntakeUpdateToWearable(10);
+
 
                     //felhasználó adatbázisban történő frissítése az új adatokkal
                     mDatabase.child("users").child(uid).setValue(user).addOnCompleteListener(updateTask -> {
@@ -228,7 +208,7 @@ public class HomeFragment extends Fragment {
                             String formattedValue = decimalFormat.format(newCurrentWaterIntake);
                             binding.currentEditText.setText(formattedValue);
 
-                            sendWaterIntakeUpdateToWearable(user.getCurrentWaterIntake());
+                            //sendWaterIntakeUpdateToWearable(user.getCurrentWaterIntake());
                             sendUserDataToWearable(user);
 
                             //animáció frissítése az új vízfogyasztási adatok alapján
@@ -290,42 +270,6 @@ public class HomeFragment extends Fragment {
     }
 
 
-    //wearable OS
-    /*
-    private void sendUserDataToWearable(User user) {
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/user_data");
-        putDataMapReq.getDataMap().putLong("timestamp", new Date().getTime()); // Az adatfrissítés egyediségének biztosítása
-        putDataMapReq.getDataMap().putString("name", user.getName());
-        putDataMapReq.getDataMap().putFloat("currentWaterIntake", user.getCurrentWaterIntake());
-        putDataMapReq.getDataMap().putDouble("totalWaterIntake", user.getTotalWaterIntake());
-
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        putDataReq.setUrgent();
-        Wearable.getDataClient(requireActivity()).putDataItem(putDataReq)
-                .addOnSuccessListener(dataItem -> Log.d("DataSend", "Sending data was successful: $userData"))
-                .addOnFailureListener(e -> Log.d("DataSend", "Sending data failed.", e));
-    }*/
-    private void sendUserData() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            String uid = currentUser.getUid();
-            // Adatok lekérése és küldése
-            mDatabase.child("users").child(uid).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    User user = task.getResult().getValue(User.class);
-                    if (user != null) {
-                        sendUserDataToWearable(user);
-                    } else {
-                        Log.e(TAG, "User data is null");
-                    }
-                } else {
-                    Log.e(TAG, "Task failed: " + task.getException());
-                }
-            });
-        } else {
-            Log.e(TAG, "Current user is null");
-        }
-    }
 
 
 
@@ -342,35 +286,10 @@ public class HomeFragment extends Fragment {
                 .addOnFailureListener(e -> Log.e(TAG, "Data send failed", e));
     }
 
-    private void sendMessageToWear(User user) {
-        // A user objektumból stringgé alakítjuk az adatokat
-        String messageContent = user.getName() + ";" + user.getCurrentWaterIntake() + ";" + user.getTotalWaterIntake();
 
-        // Minden csatlakoztatott eszközre küldjük az üzenetet
-        Task<List<Node>> nodeListTask = Wearable.getNodeClient(requireActivity()).getConnectedNodes();
-        nodeListTask.addOnSuccessListener(nodes -> {
-            for (Node node : nodes) {
-                Wearable.getMessageClient(requireActivity()).sendMessage(node.getId(), "/user_data", messageContent.getBytes())
-                        .addOnSuccessListener(aVoid -> Log.d("HomeFragment", "Message sent successfully"))
-                        .addOnFailureListener(e -> Log.e("HomeFragment", "Message send failed", e));
-            }
-        });
-    }
-
-
-    private void sendUsernameToWearable(String username) {
-        PutDataMapRequest dataMapRequest = PutDataMapRequest.create("/user_data");
-        dataMapRequest.getDataMap().putString("username", username);
-        dataMapRequest.getDataMap().putLong("timestamp", new Date().getTime()); // Egyedi timestamp a frissítésekhez
-        PutDataRequest request = dataMapRequest.asPutDataRequest();
-        request.setUrgent();
-        Wearable.getDataClient(requireActivity()).putDataItem(request)
-                .addOnSuccessListener(dataItem -> Log.d("DataSend", "Username sent successfully: " + dataItem))
-                .addOnFailureListener(e -> Log.e("DataSend", "Failed to send username", e));
-    }
 
     private void sendSimpleMessageToWear() {
-        // Létrehozzuk az adatküldési kérést
+        // Létrehozzuk az adatküldési kérést csak próba, küldés - fogadás megvalósítása
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/simple_message_path");
         putDataMapReq.getDataMap().putString("simple_message_key", "Víz hozzáadva");
         putDataMapReq.getDataMap().putLong("timestamp", new Date().getTime()); // Időbélyeg hozzáadása
@@ -384,25 +303,6 @@ public class HomeFragment extends Fragment {
         }).addOnFailureListener(e -> Log.e(TAG, "Egyszerű üzenet küldése sikertelen.", e));
     }
 
-
-    private void sendWaterIntakeUpdateToWearable(float currentIntake) {
-        DataClient dataClient = Wearable.getDataClient(getContext());
-
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/update_water_intake");
-        putDataMapReq.getDataMap().putLong("timestamp", System.currentTimeMillis()); // Egyedi timestamp a frissítésekhez
-        putDataMapReq.getDataMap().putFloat("currentIntake", currentIntake); // A jelenlegi vízfogyasztás értéke
-
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest().setUrgent();
-        Task<DataItem> putDataTask = dataClient.putDataItem(putDataReq);
-
-        putDataTask.addOnSuccessListener(dataItem ->
-                Log.d(TAG, "Success: Water intake update sent to wearable")
-        );
-
-        putDataTask.addOnFailureListener(e ->
-                Log.e(TAG, "ERROR: failed to send Water Intake update", e)
-        );
-    }
 
     @Override
     public void onStop() {

@@ -20,10 +20,11 @@ import hu.app.hydrationapp.databinding.FragmentLogoutBinding;
 import hu.app.hydrationapp.ui.logout.LogoutViewModel;
 import hu.app.hydrationapp.ui.registration.RegistrationFragment;
 
-public class LogoutFragment extends Fragment {
-    FirebaseAuth mAuth;
-    FirebaseUser user;
 
+// ... [Az előző importok elhelyezése] ...
+
+public class LogoutFragment extends Fragment {
+    private FirebaseAuth mAuth;
     private FragmentLogoutBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,31 +36,25 @@ public class LogoutFragment extends Fragment {
         View root = binding.getRoot();
 
         mAuth = FirebaseAuth.getInstance();
-        Button logoutButton = binding.logoutButton;
-        user = mAuth.getCurrentUser();
-if (user==null){
-            NavHostFragment.findNavController(LogoutFragment.this)
-                    .navigate(R.id.action_navigation_logout_to_navigation_home);
-        }
-else {
-    logoutButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            FirebaseAuth.getInstance().signOut();
-            NavHostFragment.findNavController(LogoutFragment.this)
-                    .navigate(R.id.action_navigation_logout_to_navigation_home);
-        }
-    });
-}
+        FirebaseUser user = mAuth.getCurrentUser();
 
-        final TextView textView = binding.textLogout;
-        logoutViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
-      /*  Button logoutButton = binding.logoutButton;
-        logoutButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(LogoutFragment.this)
+        // felhasználó állapota
+        if (user == null) {
+            NavHostFragment.findNavController(this)
                     .navigate(R.id.action_navigation_logout_to_navigation_home);
-        });*/
+        } else {
+
+            final TextView textView = binding.textLogout;
+            logoutViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+            // kijelentkezés gomb kezelése
+            Button logoutButton = binding.logoutButton;
+            logoutButton.setOnClickListener(v -> {
+                mAuth.signOut(); // kijelentkezés a Firebase-ból
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_navigation_logout_to_navigation_home);
+            });
+        }
 
         return root;
     }
@@ -70,3 +65,4 @@ else {
         binding = null;
     }
 }
+

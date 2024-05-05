@@ -87,7 +87,6 @@ ProgressBar progressBar;
                                             Toast.LENGTH_SHORT).show();
 
                                 } else {
-                                    // If sign in fails, display a message to the user.
 
                                     Toast.makeText(getContext(), "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
@@ -101,16 +100,6 @@ ProgressBar progressBar;
         final TextView textView = binding.textRegistration;
         registrationViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-
-
-
-
-
-      /*  Button saveRegistrationButton = binding.saveRegistrationButton;
-        saveRegistrationButton.setOnClickListener(v -> {
-            NavHostFragment.findNavController(RegistrationFragment.this)
-                    .navigate(R.id.action_navigation_registration_to_navigation_home);
-        });*/
         return root;
     }
 

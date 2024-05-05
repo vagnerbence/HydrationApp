@@ -103,27 +103,6 @@ public class NotificationsFragment extends Fragment {
         }
         return cal;
     }
-/*
-    private List<CalendarDay> generateCalendarDays(Map<String, DailyWaterIntake> dailyWaterIntakes) {
-        List<CalendarDay> calendarDays = new ArrayList<>();
-
-        for (Map.Entry<String, DailyWaterIntake> entry : dailyWaterIntakes.entrySet()) {
-            Calendar calendar = stringToCalendar(entry.getKey());
-            DailyWaterIntake dailyWaterIntake = entry.getValue();
-
-            if (dailyWaterIntake.isGoalAchieved()) {
-                CalendarDay calendarDay = new CalendarDay(calendar);
-                calendarDay.setImageResource(R.drawable.baseline_check_24 );
-                calendarDay.setLabelColor(Color.parseColor("#228B22"));
-                calendarDays.add(calendarDay);
-            }
-        }
-        return calendarDays;
-    }
-*/
-
-
-
 
 
 

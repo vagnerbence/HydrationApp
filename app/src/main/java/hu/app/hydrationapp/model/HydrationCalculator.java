@@ -19,7 +19,7 @@ public class HydrationCalculator {
 
 
     public static double calculateBaseWater(double weight, int age, String gender) {
-        double ageFactor = age < 30 ? 40 : age < 55 ? 53: 30;
+        double ageFactor = age < 30 ? 40 : age < 55 ? 35 : 30;
         double weightInPounds = weight / 0.45359237; //súly átváltása fontba
         double baseWaterOunces = ((weightInPounds / 2) * ageFactor) / 28.3;
         double baseWaterLiters = baseWaterOunces / 33.814; //eredmény átváltása literbe
