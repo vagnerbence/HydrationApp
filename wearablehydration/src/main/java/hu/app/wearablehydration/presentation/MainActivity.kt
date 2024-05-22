@@ -31,14 +31,14 @@ import java.text.DecimalFormat
 
 class MainActivity : ComponentActivity() {
     private var currentWaterIntake: Float = 0f
-    private var totalWaterIntake: Float = 2.0f // Alapértelmezett érték, frissíthető az adatok fogadásakor
+    private var totalWaterIntake: Float = 2.0f //alapértelmezett érték,ezt kell frissíteni
 
     private val updateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == DataLayerListenerService.ACTION_UPDATE_WATER_INTAKE) {
                 currentWaterIntake = intent.getFloatExtra(DataLayerListenerService.EXTRA_CURRENT_INTAKE, 0f)
                 totalWaterIntake = intent.getFloatExtra(DataLayerListenerService.EXTRA_TOTAL_INTAKE, 2.0f)
-                refreshUI() // Az UI frissítése az új adatokkal
+                refreshUI() //UI frissítése az új adatokkal
             }
         }
     }
@@ -61,9 +61,9 @@ class MainActivity : ComponentActivity() {
                 val formattedCurrentWaterIntake = decimalFormat.format(currentWaterIntake)
                 val formattedTotalWaterIntake = decimalFormat.format(totalWaterIntake)
                 val intakePercentage = if (totalWaterIntake > 0) {
-                    (currentWaterIntake / totalWaterIntake * 100).toInt() // Százalékos arány kiszámítása
+                    (currentWaterIntake / totalWaterIntake * 100).toInt() //százalék számítás
                 } else {
-                    0 // Elkerüljük az osztást nullával
+                    0
                 }
 
                 Column(

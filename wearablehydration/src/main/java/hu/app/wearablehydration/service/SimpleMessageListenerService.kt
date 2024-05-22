@@ -16,8 +16,6 @@ class SimpleMessageListenerService : WearableListenerService() {
                     val dataMap = DataMapItem.fromDataItem(item).dataMap
                     val message = dataMap.getString("simple_message_key")
                     Log.d("SimpleMessageListener", "Message received on watch: $message")
-
-                    // Itt kezelheted az üzenetet
                 }
             }
         }

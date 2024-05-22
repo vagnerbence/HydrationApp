@@ -101,15 +101,14 @@ public class HomeFragment extends Fragment {
 
                         resetCurrentWaterIntakeIfNeeded(user);
 
-                        sendUserDataToWearable(user); // Adatok elküldése a viselhető eszközre
+                        sendUserDataToWearable(user); //wearable-ra küldés
 
-                        // kezdő animáció állapot és sikeres animáció elrejtése új felhasználók esetén
+                        //kezdő animáció állapot és sikeres animáció elrejtése új felhasználók esetén
                         float initialProgress = user.getCurrentWaterIntake() / (float) user.getTotalWaterIntake();
                         binding.animationView.setProgress(initialProgress);
                         binding.successAnimation.setVisibility(View.GONE);
                     } else {
 
-                        // kezeljük az esetet, ha nincsenek felhasználói adatok
                         handleNoUserData();
 
                     }
@@ -142,7 +141,6 @@ public class HomeFragment extends Fragment {
 
 
     private void handleNoUserData(){
-        // Kezelje az esetet, ha az adatok nem érhetők el (pl. új felhasználó)
         binding.quantityEditText.setText("0");
         binding.currentEditText.setText("0");
         binding.animationView.setProgress(0f);
@@ -240,7 +238,7 @@ public class HomeFragment extends Fragment {
 
     private void scheduleReminderIfGoalNotAchieved(User user, boolean goalAchieved) {
         if (!goalAchieved) {
-            //értesítési csatorna létrehozása, ha még nem létezik
+            //értesítési csatorna létrehozása
             NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager.getNotificationChannel("hydrateReminder") == null) {
                 NotificationChannel channel = new NotificationChannel("hydrateReminder", "Hydration Reminder", NotificationManager.IMPORTANCE_DEFAULT);
@@ -257,6 +255,7 @@ public class HomeFragment extends Fragment {
             startTime.set(Calendar.HOUR_OF_DAY, 8);
             startTime.set(Calendar.MINUTE, 0);
             long intervalTime = 1000 * 60* 60* 2; // 2 óránként
+           //long intervalTime = 1000 * 30; // fél percenként videó miatt
 
             Calendar endTime = Calendar.getInstance();
             endTime.set(Calendar.HOUR_OF_DAY, 18);
@@ -289,7 +288,7 @@ public class HomeFragment extends Fragment {
 
 
     private void sendSimpleMessageToWear() {
-        // Létrehozzuk az adatküldési kérést csak próba, küldés - fogadás megvalósítása
+        //létrehozzuk az adatküldési kérést csak próba, küldés - fogadás megvalósítása
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/simple_message_path");
         putDataMapReq.getDataMap().putString("simple_message_key", "Víz hozzáadva");
         putDataMapReq.getDataMap().putLong("timestamp", new Date().getTime()); // Időbélyeg hozzáadása

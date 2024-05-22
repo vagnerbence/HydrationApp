@@ -54,7 +54,6 @@ public class ReminderBroadcastReceiver extends BroadcastReceiver {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    // Handle possible errors.
                 }
             });
         }

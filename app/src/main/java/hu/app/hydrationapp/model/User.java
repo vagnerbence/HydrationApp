@@ -10,14 +10,14 @@ public class User {
     public int age;
     public String gender;
     public String activityLevel;
-    public double totalWaterIntake; // teljes vízmennyiség
-    public float currentWaterIntake; // jelenlegi vízfogyasztás
-    private Map<String, DailyWaterIntake> dailyWaterIntakes; // napi vízfogyasztási adatok
+    public double totalWaterIntake; //teljes vízmennyiség
+    public float currentWaterIntake; //jelenlegi vízfogyasztás
+    private Map<String, DailyWaterIntake> dailyWaterIntakes; //napi vízfogyasztási adatok
 
     private String lastUpdateDate;
 
 
-    // üres konstruktor szükséges a Firebase számára
+    //üres konstruktor szükséges a Firebase számára
     public User() {
         dailyWaterIntakes = new HashMap<>();
     }

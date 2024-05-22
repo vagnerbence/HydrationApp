@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-// menu elrejtése nem bejelentkezett user esetében
+//menu elrejtése nem bejelentkezett user esetében
         public void setBottomNavVisibility ( boolean visible){
             if (binding.navView != null) {
                 binding.navView.setVisibility(visible ? View.VISIBLE : View.GONE);

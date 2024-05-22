@@ -38,7 +38,7 @@ public class LogoutFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        // felhasználó állapota
+        //felhasználó állapota
         if (user == null) {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_navigation_logout_to_navigation_home);
@@ -47,7 +47,7 @@ public class LogoutFragment extends Fragment {
             final TextView textView = binding.textLogout;
             logoutViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-            // kijelentkezés gomb kezelése
+            //kijelentkezés gomb kezelése
             Button logoutButton = binding.logoutButton;
             logoutButton.setOnClickListener(v -> {
                 mAuth.signOut(); // kijelentkezés a Firebase-ból

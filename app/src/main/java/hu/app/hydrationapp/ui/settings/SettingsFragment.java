@@ -62,9 +62,9 @@ public class SettingsFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     //léteznek-e mentett beállítások a jelenlegi felhasználóhoz
                     if (!dataSnapshot.exists()) {
-                        //ha nem léteznek adatok, akkor tisztítjuk a UI mezőket
+                        //ha nem léteznek adatok, mezők tartalmának törlése
                         clearUserDataInView();
-                        return; //ezzel befejezzük a metódus futtatását
+                        return;
                     }
 
                     //ha vannak mentett adatok

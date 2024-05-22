@@ -5,7 +5,7 @@ public class DailyWaterIntake {
     public boolean goalAchieved;
 
     public DailyWaterIntake() {
-        // Firebasehez szükséges üres konstruktor
+        //Firebasehez szükséges üres konstruktor
     }
 
     public DailyWaterIntake(String date, boolean goalAchieved) {
